@@ -2,7 +2,7 @@
 
 Interactive wall-calendar application built with Next.js, TypeScript, and Tailwind CSS.
 
-[![Live Demo](https://img.shields.io/badge/demo-live-blue?style=for-the-badge)](https://your-live-demo-url.example.com)
+[![Live Demo](https://img.shields.io/badge/demo-live-blue?style=for-the-badge)](https://wall-calender-takeyouforward.vercel.app/)
 
 ## Features
 
