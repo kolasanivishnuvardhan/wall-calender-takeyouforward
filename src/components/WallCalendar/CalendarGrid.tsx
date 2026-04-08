@@ -1,14 +1,14 @@
-import { addDays, format, getYear, isSameDay } from 'date-fns';
-import { useCallback, useMemo, useState } from 'react';
+import { addDays, format, getYear, isSameDay } from "date-fns";
+import { useCallback, useMemo, useState } from "react";
 
-import { useCalendarContext } from './CalendarContext';
-import { DayCell } from './DayCell';
-import { HOLIDAYS_2025 } from '@/lib/holidays';
-import { buildDayGrid } from '@/lib/calendarUtils';
+import { useCalendarContext } from "./CalendarContext";
+import { DayCell } from "./DayCell";
+import { getHolidaysForYear } from "@/lib/holidays";
+import { buildDayGrid } from "@/lib/calendarUtils";
 
-import type { DayData } from './types';
+import type { DayData } from "./types";
 
-const DAY_HEADERS = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
+const DAY_HEADERS = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
 
 /** Main 7-column wall calendar date grid with keyboard support and range logic. */
 export function CalendarGrid(): JSX.Element {
@@ -28,7 +28,7 @@ export function CalendarGrid(): JSX.Element {
   const [focusedDate, setFocusedDate] = useState<Date>(currentMonth);
 
   const holidays = useMemo<Record<string, string>>(
-    () => (getYear(currentMonth) === 2025 ? HOLIDAYS_2025 : {}),
+    () => getHolidaysForYear(getYear(currentMonth)),
     [currentMonth],
   );
 
@@ -45,12 +45,12 @@ export function CalendarGrid(): JSX.Element {
 
   const onGridKeyDown = useCallback(
     (event: React.KeyboardEvent<HTMLDivElement>): void => {
-      if (event.key === 'Escape') {
+      if (event.key === "Escape") {
         cancelSelection();
         return;
       }
 
-      if (event.key === 'Enter') {
+      if (event.key === "Enter") {
         handleDayClick(focusedDate);
         return;
       }
@@ -82,23 +82,28 @@ export function CalendarGrid(): JSX.Element {
             className="flex h-9 items-center justify-center text-[10px] font-semibold tracking-[0.1em]"
             style={{
               color:
-                index === 5
-                  ? theme.accentColor
+                index === 0
+                  ? "#EF4444"
                   : index === 6
-                    ? '#EF4444'
+                    ? theme.accentColor
                     : isDarkMode
-                      ? '#94A3B8'
-                      : '#64748B',
+                      ? "#94A3B8"
+                      : "#64748B",
             }}
           >
             {header}
           </div>
         ))}
       </div>
-      <div role="grid" tabIndex={0} className="grid grid-cols-7 gap-[2px]" onKeyDown={onGridKeyDown}>
+      <div
+        role="grid"
+        tabIndex={0}
+        className="grid grid-cols-7 gap-[2px]"
+        onKeyDown={onGridKeyDown}
+      >
         {days.map((day: DayData) => (
           <DayCell
-            key={format(day.date, 'yyyy-MM-dd')}
+            key={format(day.date, "yyyy-MM-dd")}
             day={day}
             range={selectedRange}
             hoverDate={hoverDate}

@@ -1,74 +1,78 @@
+# Wall Calendar - TakeYouForward Assignment
 
-
-Production-grade, interactive wall-calendar experience inspired by a physical spiral-bound desk/wall calendar.
+Interactive wall-calendar application built with Next.js, TypeScript, and Tailwind CSS.
 
 [![Live Demo](https://img.shields.io/badge/demo-live-blue?style=for-the-badge)](https://your-live-demo-url.example.com)
 
-## ✅ Features
+## Features
 
-- ✅ Spiral-bound physical calendar aesthetic (CSS-rendered coils, hero, themed chevron)
-- ✅ 7-column Monday-first calendar with overflow/holiday/note indicators
-- ✅ Date range selection state machine with hover preview and keyboard support
-- ✅ Debounced note auto-save with localStorage persistence and status transitions
-- ✅ Range copy-to-clipboard action with toast feedback
-- ✅ Dynamic monthly themes (12 months with accent + image + dark palette)
-- ✅ Holiday markers with hover tooltips
-- ✅ Mini previous/next month preview cards
-- ✅ Page flip motion transitions for month navigation
-- ✅ Dark mode with persisted preference
-- ✅ Mobile swipe navigation and collapsible notes panel
-- ✅ Accessibility support (`role=grid`, `role=gridcell`, `aria-live`, focus rings)
+- Spiral-bound calendar look with themed month header and chevron divider
+- Sunday-first 7-column month grid with overflow-day rendering
+- Date range selection with hover preview and keyboard interactions
+- Auto-saving notes with localStorage persistence
+- Copy selected date range to clipboard
+- Holiday badges with tooltips
+- Mini previous/next month preview cards
+- Theme switching with persisted dark mode preference
+- Responsive layout with collapsible notes panel
+- Accessible grid semantics and focus states
 
 ## Tech Stack
 
-| Layer | Choice |
-|---|---|
-| Framework | Next.js 14 (App Router) |
-| Language | TypeScript (strict mode) |
-| Styling | Tailwind CSS v3 |
-| Motion | Framer Motion |
-| Date Math | date-fns |
-| Icons | lucide-react |
-| Persistence | localStorage only |
+| Layer          | Choice                   |
+| -------------- | ------------------------ |
+| Framework      | Next.js 14 (App Router)  |
+| Language       | TypeScript (strict mode) |
+| Styling        | Tailwind CSS v3          |
+| Motion         | Framer Motion            |
+| Date Utilities | date-fns                 |
+| Icons          | lucide-react             |
+| Persistence    | localStorage             |
 
-## Getting Started
+## Local Setup
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open `http://localhost:3000`.
+Open http://localhost:3000
 
-## Architecture Decisions
+## Available Scripts
 
-- **date-fns over moment.js**: smaller footprint, immutable helpers, tree-shakable utilities.
-- **Framer Motion**: expressive and composable transition API for the page-flip interaction.
-- **Calendar Context**: central calendar state avoids deep prop drilling and keeps features cohesive.
-- **Custom hooks**:
-  - `useCalendar`: month navigation and date helpers
-  - `useRangeSelection`: deterministic selection state machine
-  - `useNotes`: debounced persistence and save-state feedback
-  - `useMonthTheme`: centralized visual theme resolution
+```bash
+npm run dev    # Start development server
+npm run lint   # Run ESLint checks
+npm run build  # Create production build
+npm run start  # Start production server
+```
 
 ## Project Structure
 
 ```text
 src/
-├── app/
-├── components/WallCalendar/
-├── hooks/
-├── lib/
+  app/                    # App Router pages and global styles
+  components/WallCalendar/# Calendar UI components
+  hooks/                  # Custom state and behavior hooks
+  lib/                    # Pure date and domain utilities
 ```
 
-## Screenshots
+## Deployment (Vercel)
 
-- Desktop View — _placeholder_
-- Tablet View — _placeholder_
-- Mobile + Collapsible Notes — _placeholder_
-- Dark Mode — _placeholder_
+1. Push code to GitHub.
+2. Import the repository in Vercel.
+3. Use default settings.
+4. Build command: npm run build
+5. Output: .next
+
+## Submission Checklist
+
+- Live demo link updated in this README
+- npm run lint passes
+- npm run build passes
+- Repository is public and includes complete source code
 
 ## Notes
 
-- Designed around tactile, print-like visual language while remaining fully interactive.
-- All localStorage access is browser-guarded (`typeof window !== 'undefined'`).
+- Browser-only APIs are guarded to avoid SSR issues.
+- Calendar state is centralized with context plus focused custom hooks.

@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { format, getMonth, getYear } from 'date-fns';
+import { format, getMonth, getYear } from "date-fns";
 import {
   createContext,
   useCallback,
@@ -8,14 +8,19 @@ import {
   useEffect,
   useMemo,
   useState,
-} from 'react';
+} from "react";
 
-import { useCalendar } from '@/hooks/useCalendar';
-import { useMonthTheme } from '@/hooks/useMonthTheme';
-import { useRangeSelection } from '@/hooks/useRangeSelection';
-import { getActiveNoteKey, noteKeyIncludesDate } from '@/lib/calendarUtils';
+import { useCalendar } from "@/hooks/useCalendar";
+import { useMonthTheme } from "@/hooks/useMonthTheme";
+import { useRangeSelection } from "@/hooks/useRangeSelection";
+import { getActiveNoteKey, noteKeyIncludesDate } from "@/lib/calendarUtils";
 
-import type { CalendarState, DateRange, MonthTheme, SelectionState } from './types';
+import type {
+  CalendarState,
+  DateRange,
+  MonthTheme,
+  SelectionState,
+} from "./types";
 
 interface CalendarContextValue extends CalendarState {
   goToPrevMonth: () => void;
@@ -32,14 +37,20 @@ interface CalendarContextValue extends CalendarState {
   selectedRange: DateRange;
 }
 
-const THEME_STORAGE_KEY = 'cal_theme_pref';
-const NOTE_STORAGE_PREFIX = 'cal_note_';
+const THEME_STORAGE_KEY = "cal_theme_pref";
+const NOTE_STORAGE_PREFIX = "cal_note_";
 
 const CalendarContext = createContext<CalendarContextValue | null>(null);
 
 /** Centralized calendar context to avoid prop drilling and share calendar state globally. */
-export function CalendarProvider({ children }: { children: React.ReactNode }): JSX.Element {
-  const { currentMonth, goToMonth, goToNextMonth, goToPrevMonth } = useCalendar(new Date(2025, 0, 1));
+export function CalendarProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}): JSX.Element {
+  const { currentMonth, goToMonth, goToNextMonth, goToPrevMonth } = useCalendar(
+    new Date(),
+  );
   const {
     range,
     hoverDate,
@@ -54,7 +65,7 @@ export function CalendarProvider({ children }: { children: React.ReactNode }): J
   const [storedNoteKeys, setStoredNoteKeys] = useState<string[]>([]);
 
   const refreshStoredNoteKeys = useCallback((): void => {
-    if (typeof window === 'undefined') {
+    if (typeof window === "undefined") {
       return;
     }
     const keys: string[] = [];
@@ -68,17 +79,20 @@ export function CalendarProvider({ children }: { children: React.ReactNode }): J
   }, []);
 
   useEffect((): void => {
-    if (typeof window === 'undefined') {
+    if (typeof window === "undefined") {
       return;
     }
     const pref: string | null = window.localStorage.getItem(THEME_STORAGE_KEY);
-    const enabled: boolean = pref === 'dark';
+    const enabled: boolean = pref === "dark";
     setIsDarkMode(enabled);
-    document.documentElement.classList.toggle('dark', enabled);
+    document.documentElement.classList.toggle("dark", enabled);
     refreshStoredNoteKeys();
   }, [refreshStoredNoteKeys]);
 
-  const theme: MonthTheme = useMonthTheme(getMonth(currentMonth) + 1, getYear(currentMonth));
+  const theme: MonthTheme = useMonthTheme(
+    getMonth(currentMonth) + 1,
+    getYear(currentMonth),
+  );
 
   const activeNoteKey: string = useMemo<string>(
     () => getActiveNoteKey(currentMonth, range),
@@ -86,15 +100,16 @@ export function CalendarProvider({ children }: { children: React.ReactNode }): J
   );
 
   const hasNoteForDate = useCallback(
-    (date: Date): boolean => storedNoteKeys.some((key: string) => noteKeyIncludesDate(key, date)),
+    (date: Date): boolean =>
+      storedNoteKeys.some((key: string) => noteKeyIncludesDate(key, date)),
     [storedNoteKeys],
   );
 
   const setDarkMode = useCallback((value: boolean): void => {
     setIsDarkMode(value);
-    if (typeof window !== 'undefined') {
-      window.localStorage.setItem(THEME_STORAGE_KEY, value ? 'dark' : 'light');
-      document.documentElement.classList.toggle('dark', value);
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(THEME_STORAGE_KEY, value ? "dark" : "light");
+      document.documentElement.classList.toggle("dark", value);
     }
   }, []);
 
@@ -118,21 +133,25 @@ export function CalendarProvider({ children }: { children: React.ReactNode }): J
     setIsDarkMode: setDarkMode,
   };
 
-  return <CalendarContext.Provider value={value}>{children}</CalendarContext.Provider>;
+  return (
+    <CalendarContext.Provider value={value}>
+      {children}
+    </CalendarContext.Provider>
+  );
 }
 
 /** Access Wall Calendar context state and commands. */
 export function useCalendarContext(): CalendarContextValue {
   const context: CalendarContextValue | null = useContext(CalendarContext);
   if (!context) {
-    throw new Error('useCalendarContext must be used within CalendarProvider');
+    throw new Error("useCalendarContext must be used within CalendarProvider");
   }
   return context;
 }
 
 export function rangeAnnouncementText(range: DateRange): string {
   if (!range.start || !range.end) {
-    return '';
+    return "";
   }
-  return `Range selected: ${format(range.start, 'MMMM d')} to ${format(range.end, 'MMMM d')}`;
+  return `Range selected: ${format(range.start, "MMMM d")} to ${format(range.end, "MMMM d")}`;
 }

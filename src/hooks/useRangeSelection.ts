@@ -1,9 +1,12 @@
-'use client';
+"use client";
 
-import { isAfter, isBefore, isSameDay } from 'date-fns';
-import { useCallback, useState } from 'react';
+import { isAfter, isBefore, isSameDay } from "date-fns";
+import { useCallback, useState } from "react";
 
-import type { DateRange, SelectionState } from '@/components/WallCalendar/types';
+import type {
+  DateRange,
+  SelectionState,
+} from "@/components/WallCalendar/types";
 
 interface UseRangeSelectionReturn {
   range: DateRange;
@@ -21,44 +24,49 @@ const EMPTY_RANGE: DateRange = { start: null, end: null };
 export function useRangeSelection(): UseRangeSelectionReturn {
   const [range, setRange] = useState<DateRange>(EMPTY_RANGE);
   const [hoverDate, setHoverDate] = useState<Date | null>(null);
-  const [selectionState, setSelectionState] = useState<SelectionState>('IDLE');
+  const [selectionState, setSelectionState] = useState<SelectionState>("IDLE");
 
   const handleDayClick = useCallback(
     (date: Date): void => {
-      if (selectionState === 'IDLE') {
+      if (selectionState === "IDLE") {
         setRange({ start: date, end: null });
-        setSelectionState('START_SELECTED');
+        setSelectionState("START_SELECTED");
         return;
       }
 
-      if (selectionState === 'START_SELECTED') {
+      if (selectionState === "START_SELECTED") {
         if (!range.start) {
           setRange({ start: date, end: null });
           return;
         }
         if (isBefore(date, range.start) && !isSameDay(date, range.start)) {
-          setRange({ start: date, end: null });
+          setRange({ start: date, end: range.start });
+          setHoverDate(null);
+          setSelectionState("RANGE_COMPLETE");
           return;
         }
         setRange({
           start: range.start,
-          end: isAfter(date, range.start) || isSameDay(date, range.start) ? date : range.start,
+          end:
+            isAfter(date, range.start) || isSameDay(date, range.start)
+              ? date
+              : range.start,
         });
         setHoverDate(null);
-        setSelectionState('RANGE_COMPLETE');
+        setSelectionState("RANGE_COMPLETE");
         return;
       }
 
       setRange({ start: date, end: null });
       setHoverDate(null);
-      setSelectionState('START_SELECTED');
+      setSelectionState("START_SELECTED");
     },
     [range.start, selectionState],
   );
 
   const handleDayHover = useCallback(
     (date: Date): void => {
-      if (selectionState === 'START_SELECTED') {
+      if (selectionState === "START_SELECTED") {
         setHoverDate(date);
       }
     },
@@ -72,7 +80,7 @@ export function useRangeSelection(): UseRangeSelectionReturn {
   const cancelSelection = useCallback((): void => {
     setRange(EMPTY_RANGE);
     setHoverDate(null);
-    setSelectionState('IDLE');
+    setSelectionState("IDLE");
   }, []);
 
   return {

@@ -1,10 +1,11 @@
 "use client";
 
-import { format } from 'date-fns';
-import { getMonth } from 'date-fns';
-import { useEffect, useMemo, useState } from 'react';
+import { format } from "date-fns";
+import { getMonth } from "date-fns";
+import Image from "next/image";
+import { useEffect, useMemo, useState } from "react";
 
-import type { MonthTheme } from './types';
+import type { MonthTheme } from "./types";
 
 interface CalendarHeaderProps {
   monthDate: Date;
@@ -12,9 +13,13 @@ interface CalendarHeaderProps {
 }
 
 /** Hero image header with month/year overlay and theme-aware chevron divider. */
-export function CalendarHeader({ monthDate, theme }: CalendarHeaderProps): JSX.Element {
+export function CalendarHeader({
+  monthDate,
+  theme,
+}: CalendarHeaderProps): JSX.Element {
   const fallbackUrl = useMemo<string>(
-    () => `https://picsum.photos/seed/calendar-${getMonth(monthDate) + 1}/1200/640`,
+    () =>
+      `https://picsum.photos/seed/calendar-${getMonth(monthDate) + 1}/1200/640`,
     [monthDate],
   );
   const [imageSrc, setImageSrc] = useState<string>(theme.heroImageUrl);
@@ -33,16 +38,19 @@ export function CalendarHeader({ monthDate, theme }: CalendarHeaderProps): JSX.E
             className="h-full w-full"
             style={{
               background:
-                'linear-gradient(135deg, rgba(15,23,42,0.95) 0%, rgba(30,41,59,0.85) 55%, rgba(51,65,85,0.95) 100%)',
+                "linear-gradient(135deg, rgba(15,23,42,0.95) 0%, rgba(30,41,59,0.85) 55%, rgba(51,65,85,0.95) 100%)",
             }}
             aria-hidden="true"
           />
         ) : (
-          <img
+          <Image
             src={imageSrc}
             alt={theme.heroImageAlt}
-            className="h-full w-full object-cover brightness-110 contrast-110"
+            fill
+            sizes="100vw"
+            className="object-cover brightness-110 contrast-110"
             loading="lazy"
+            unoptimized
             onError={(): void => {
               if (imageSrc !== fallbackUrl) {
                 setImageSrc(fallbackUrl);
@@ -53,12 +61,24 @@ export function CalendarHeader({ monthDate, theme }: CalendarHeaderProps): JSX.E
           />
         )}
         <div className="absolute bottom-4 right-4 text-right text-white [text-shadow:0_2px_8px_rgba(0,0,0,0.6)]">
-          <p className="text-[13px] font-light uppercase tracking-[0.08em] opacity-80">{format(monthDate, 'yyyy')}</p>
-          <p className="font-serif text-[28px] font-extrabold leading-none uppercase">{format(monthDate, 'MMMM')}</p>
+          <p className="text-[13px] font-light uppercase tracking-[0.08em] opacity-80">
+            {format(monthDate, "yyyy")}
+          </p>
+          <p className="font-serif text-[28px] font-extrabold leading-none uppercase">
+            {format(monthDate, "MMMM")}
+          </p>
         </div>
       </div>
-      <svg viewBox="0 0 400 60" preserveAspectRatio="none" className="block h-10 w-full" aria-hidden="true">
-        <path d="M0,60 L0,30 L100,0 L200,30 L300,0 L400,30 L400,60 Z" fill={theme.chevronColor} />
+      <svg
+        viewBox="0 0 400 60"
+        preserveAspectRatio="none"
+        className="block h-10 w-full"
+        aria-hidden="true"
+      >
+        <path
+          d="M0,60 L0,30 L100,0 L200,30 L300,0 L400,30 L400,60 Z"
+          fill={theme.chevronColor}
+        />
       </svg>
     </header>
   );
